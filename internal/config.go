@@ -9,28 +9,31 @@ import (
 type Config struct {
 	Token    string `json:"token"`
 	Username string `json:"username"`
+	IP       string `json:"ip"`
+	Language string `json:"language"`
 }
 
 var config Config
-var configPath string
 
-func InitConfig() {
-	home, _ := os.UserHomeDir()
-	configDir := filepath.Join(home, ".mineflared-cli")
-	configPath = filepath.Join(configDir, "config.json")
-	os.MkdirAll(configDir, os.ModePerm)
+func GetConfig() *Config {
+	return &config
+}
 
-	file, err := os.ReadFile(configPath)
-	if err == nil {
-		json.Unmarshal(file, &config)
+func LoadConfig() {
+	configDir, _ := os.UserConfigDir()
+	mineDir := filepath.Join(configDir, "minecli")
+	tokenPath := filepath.Join(mineDir, "config.json")
+
+	if data, err := os.ReadFile(tokenPath); err == nil {
+		json.Unmarshal(data, &config)
 	}
 }
 
 func SaveConfig() {
-	file, _ := json.MarshalIndent(config, "", "  ")
-	os.WriteFile(configPath, file, 0644)
-}
-
-func GetConfig() *Config {
-	return &config
+	configDir, _ := os.UserConfigDir()
+	mineDir := filepath.Join(configDir, "minecli")
+	os.MkdirAll(mineDir, 0700)
+	tokenPath := filepath.Join(mineDir, "config.json")
+	data, _ := json.Marshal(config)
+	os.WriteFile(tokenPath, data, 0600)
 }

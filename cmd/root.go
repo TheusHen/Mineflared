@@ -11,9 +11,13 @@ var rootCmd = &cobra.Command{
 }
 
 func Execute() {
-	internal.InitConfig()
+	internal.LoadConfig()
+
+	rootCmd.Short = internal.GetTranslation("CLI_SHORT_DESC")
+
 	rootCmd.AddCommand(loginCmd)
 	rootCmd.AddCommand(createCmd)
 	rootCmd.AddCommand(statusCmd)
+
 	rootCmd.Execute()
 }
