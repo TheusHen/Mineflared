@@ -18,6 +18,9 @@ var deleteCmd = &cobra.Command{
 			return
 		}
 
+		backendURL := internal.GetEnv("BACKEND_URL", "http://localhost:3000")
+		deleteURL := backendURL + "/delete"
+
 		fmt.Print(internal.GetTranslation("DELETE_CONFIRM_PROMPT"))
 		var confirm string
 		fmt.Scanln(&confirm)
@@ -26,7 +29,7 @@ var deleteCmd = &cobra.Command{
 			return
 		}
 
-		req, err := http.NewRequest("DELETE", "http://localhost:3000/delete", nil)
+		req, err := http.NewRequest("DELETE", deleteURL, nil)
 		if err != nil {
 			fmt.Println(internal.GetTranslation("DELETE_REQUEST_FAILED"), err)
 			return
