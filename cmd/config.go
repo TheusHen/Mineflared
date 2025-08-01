@@ -37,7 +37,7 @@ var configCmd = &cobra.Command{
 
 		go func() {
 			time.Sleep(2 * time.Second)
-			url := "http://localhost:3005/"
+			url := "http://localhost:3000/"
 			fmt.Println(internal.GetTranslation("CONFIG_OPEN_BROWSER"), url)
 			openBrowser(url)
 		}()

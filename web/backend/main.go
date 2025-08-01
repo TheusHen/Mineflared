@@ -11,11 +11,46 @@ import (
 
 var serverName string
 
+var textFileExtensions = []string{
+	".txt", ".md", ".json", ".yml", ".yaml", ".xml", ".csv", ".conf", ".ini", ".properties", ".log", ".cfg",
+	".html", ".htm", ".js", ".ts", ".css", ".scss", ".less", ".py", ".go", ".java", ".c", ".cpp", ".h", ".php", ".rb", ".sh", ".bat", ".toml",
+}
+
+func isTextFile(filename string) bool {
+	ext := strings.ToLower(filepath.Ext(filename))
+	for _, allowed := range textFileExtensions {
+		if ext == allowed {
+			return true
+		}
+	}
+	return false
+}
+
 func main() {
 	if len(os.Args) > 1 {
 		serverName = os.Args[1]
 	} else {
-		println("serverName is required as argument")
+		println("serverName is required as an argument")
+		os.Exit(1)
+	}
+
+	// Generate the HTML on initialization
+	err := os.MkdirAll("web/src", 0755)
+	if err != nil {
+		println("Error creating directory web/src:", err.Error())
+		os.Exit(1)
+	}
+
+	// Load HTML content from a file
+	htmlContent, err := os.ReadFile("web/src/index.html.txt")
+	if err != nil {
+		println("Error reading index.html.txt:", err.Error())
+		os.Exit(1)
+	}
+
+	err = os.WriteFile("web/src/index.html", htmlContent, 0644)
+	if err != nil {
+		println("Error generating index.html:", err.Error())
 		os.Exit(1)
 	}
 
@@ -28,7 +63,13 @@ func main() {
 	http.HandleFunc("/mods/add", addMod)
 	http.HandleFunc("/plugins/list", listPlugins)
 	http.HandleFunc("/plugins/add", addPlugin)
-	http.ListenAndServe(":3005", nil)
+
+	println("Server running on http://localhost:3000")
+	err = http.ListenAndServe(":3000", nil)
+	if err != nil {
+		println("Error starting server:", err.Error())
+		os.Exit(1)
+	}
 }
 
 func serveIndex(w http.ResponseWriter, r *http.Request) {
@@ -72,8 +113,13 @@ func listFiles(w http.ResponseWriter, r *http.Request) {
 	}
 	var out []string
 	for _, f := range files {
-		if !f.IsDir() {
-			out = append(out, f.Name())
+		if f.IsDir() {
+			// Ignora pastas
+			continue
+		}
+		name := f.Name()
+		if isTextFile(name) {
+			out = append(out, name)
 		}
 	}
 	json.NewEncoder(w).Encode(map[string]any{"files": out})
@@ -85,6 +131,11 @@ func readFile(w http.ResponseWriter, r *http.Request) {
 	if srv == "" || file == "" {
 		w.WriteHeader(400)
 		json.NewEncoder(w).Encode(map[string]any{"error": "missing server or file"})
+		return
+	}
+	if !isTextFile(file) {
+		w.WriteHeader(400)
+		json.NewEncoder(w).Encode(map[string]any{"error": "file type not allowed"})
 		return
 	}
 	path := filepath.Join(string(os.PathSeparator), "servers", srv, file)
@@ -104,6 +155,11 @@ func saveFile(w http.ResponseWriter, r *http.Request) {
 	if srv == "" || file == "" {
 		w.WriteHeader(400)
 		json.NewEncoder(w).Encode(map[string]any{"error": "missing server or file"})
+		return
+	}
+	if !isTextFile(file) {
+		w.WriteHeader(400)
+		json.NewEncoder(w).Encode(map[string]any{"error": "file type not allowed"})
 		return
 	}
 	data, err := io.ReadAll(r.Body)
