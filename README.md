@@ -49,7 +49,7 @@ mineflared create           # Create new Java/Bedrock server
 mineflared start <name>     # Start an existing server
 mineflared status           # Show current server status
 mineflared list             # List all your servers
-mineflared config           # Open server.properties editor in browser
+mineflared config <name>    # Open server.properties editor in browser
 mineflared backup <name>    # Create .zip or .rar backup
 mineflared restore          # Restore from backup
 mineflared language         # Change CLI language
