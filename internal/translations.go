@@ -15,6 +15,15 @@ var EnglishTranslations = map[string]string{
 	"LOGIN_BROWSER_SUCCESS":    "✅ Login successful. You can close this window.",
 	"LOGIN_WAITING":            "Waiting for login...",
 
+	// Delete command
+	"DELETE_SHORT_DESC":     "Delete your account and all associated data from Mineflared.",
+	"DELETE_CONFIRM_PROMPT": "Are you sure you want to permanently delete your account and all data? (y/N): ",
+	"DELETE_ABORTED":        "Aborted.",
+	"DELETE_LOGIN_REQUIRED": "You must be logged in to delete your account.",
+	"DELETE_REQUEST_FAILED": "Failed to connect to server:",
+	"DELETE_SUCCESS":        "Account deleted successfully.",
+	"DELETE_ERROR":          "Error deleting account:",
+	
 	// List command
 	"LIST_SHORT_DESC":        "List all local servers",
 	"LIST_SERVERS_DIR_ERROR": "Could not open servers directory: %s",
@@ -163,6 +172,15 @@ var PortugueseTranslations = map[string]string{
 	"LOGIN_TOKEN_NOT_RECEIVED": "Token não recebido",
 	"LOGIN_BROWSER_SUCCESS":    "✅ Login realizado com sucesso. Você pode fechar esta janela.",
 	"LOGIN_WAITING":            "Aguardando login...",
+
+	//Delete command
+	"DELETE_SHORT_DESC":     "Apaga sua conta e todos os dados associados do Mineflared.",
+	"DELETE_CONFIRM_PROMPT": "Tem certeza que deseja apagar permanentemente sua conta e todos os dados? (y/N): ",
+	"DELETE_ABORTED":        "Operação cancelada.",
+	"DELETE_LOGIN_REQUIRED": "Você precisa estar logado para apagar sua conta.",
+	"DELETE_REQUEST_FAILED": "Falha ao conectar ao servidor:",
+	"DELETE_SUCCESS":        "Conta apagada com sucesso.",
+	"DELETE_ERROR":          "Erro ao apagar a conta:",
 
 	// List command
 	"LIST_SHORT_DESC":        "Lista todos os servidores locais",

@@ -29,6 +29,16 @@ func LoadConfig() {
 	}
 }
 
+func DeleteConfigFile() error {
+	configDir, err := os.UserConfigDir()
+	if err != nil {
+		return err
+	}
+	mineDir := filepath.Join(configDir, "minecli")
+	configPath := filepath.Join(mineDir, "config.json")
+	return os.Remove(configPath)
+}
+
 func SaveConfig() {
 	configDir, _ := os.UserConfigDir()
 	mineDir := filepath.Join(configDir, "minecli")
