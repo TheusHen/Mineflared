@@ -11,6 +11,8 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"syscall"
+	"time"
 )
 
 var startCmd = &cobra.Command{
@@ -61,89 +63,141 @@ var startCmd = &cobra.Command{
 			return
 		}
 
-		if isJava {
-			javaOK, javaVersion := checkJava21()
-			if !javaOK {
-				fmt.Println()
-				fmt.Println("=====================================")
-				fmt.Println("[!!!] JAVA 21 IS REQUIRED TO RUN THIS SERVER [!!!]")
-				fmt.Println("Detected Java version:", javaVersion)
-				fmt.Println()
-				fmt.Println("Please install Java 21 or newer before running this server.")
-				fmt.Println("Download Java 21 (Adoptium): https://adoptium.net/temurin/releases/?version=21")
-				fmt.Println("After installing, close and reopen your terminal/Prompt/PowerShell.")
-				fmt.Println("Then run this command again:")
-				fmt.Printf("mineflared start %s\n", serverName)
-				fmt.Println("=====================================")
-				return
-			}
+		autoRestart := true
+		manualExit := false
 
-			eulaPath := filepath.Join(serverDir, "eula.txt")
-			needAskEULA := true
-			if _, err := os.Stat(eulaPath); err == nil {
-				eulaFile, err := os.ReadFile(eulaPath)
-				if err == nil && strings.Contains(string(eulaFile), "eula=true") {
-					needAskEULA = false
-				}
-			}
-			if needAskEULA {
-				fmt.Print(internal.GetTranslation("START_EULA_PROMPT"))
-				reader := bufio.NewReader(os.Stdin)
-				answer, _ := reader.ReadString('\n')
-				answer = strings.TrimSpace(strings.ToLower(answer))
-				if answer == "y" || answer == "yes" || answer == "s" || answer == "sim" {
-					f, err := os.Create(eulaPath)
-					if err != nil {
-						fmt.Println(internal.GetTranslation("START_EULA_WRITE_ERROR"), err)
-						return
-					}
-					f.WriteString("eula=true\n")
-					f.Close()
-					fmt.Println(internal.GetTranslation("START_EULA_ACCEPTED"))
-				} else {
-					fmt.Println(internal.GetTranslation("START_EULA_DECLINED"))
-					return
-				}
-			}
-			fmt.Println(internal.GetTranslation("START_JAVA_STARTING"))
-			runCmd := exec.Command("java", "-Xmx1024M", "-Xms1024M", "-jar", jarFile, "nogui")
-			runCmd.Dir = serverDir
-			runCmd.Stdout = os.Stdout
-			runCmd.Stderr = os.Stderr
-			err := runCmd.Run()
-			if err != nil {
-				fmt.Printf(internal.GetTranslation("START_JAVA_ERROR"), err)
-				fmt.Println()
-			}
-		} else if isBedrock {
-			bedrockDir := ""
-			for _, f := range files {
-				if strings.HasPrefix(f.Name(), "bedrock-server") && f.IsDir() {
-					bedrockDir = filepath.Join(serverDir, f.Name())
+		// Handle manual exit signal
+		go func() {
+			reader := bufio.NewReader(os.Stdin)
+			for {
+				text, _ := reader.ReadString('\n')
+				text = strings.TrimSpace(text)
+				if text == "exit" || text == "quit" || text == "stop" {
+					manualExit = true
 					break
 				}
 			}
-			if bedrockDir == "" {
-				fmt.Println(internal.GetTranslation("START_BEDROCK_NOT_FOUND"))
-				return
-			}
+		}()
 
-			bedrockBinary := filepath.Join(bedrockDir, "bedrock_server")
-			if _, err := os.Stat(bedrockBinary); err != nil {
-				bedrockBinary += ".exe"
-			}
-			fmt.Println(internal.GetTranslation("START_BEDROCK_STARTING"))
-			runCmd := exec.Command(bedrockBinary)
-			runCmd.Dir = bedrockDir
-			runCmd.Stdout = os.Stdout
-			runCmd.Stderr = os.Stderr
-			err := runCmd.Run()
-			if err != nil {
-				fmt.Printf(internal.GetTranslation("START_BEDROCK_ERROR"), err)
-				fmt.Println()
+		for {
+			if isJava {
+				javaOK, javaVersion := checkJava21()
+				if !javaOK {
+					fmt.Println()
+					fmt.Println("=====================================")
+					fmt.Println("[!!!] JAVA 21 IS REQUIRED TO RUN THIS SERVER [!!!]")
+					fmt.Println("Detected Java version:", javaVersion)
+					fmt.Println()
+					fmt.Println("Please install Java 21 or newer before running this server.")
+					fmt.Println("Download Java 21 (Adoptium): https://adoptium.net/temurin/releases/?version=21")
+					fmt.Println("After installing, close and reopen your terminal/Prompt/PowerShell.")
+					fmt.Println("Then run this command again:")
+					fmt.Printf("mineflared start %s\n", serverName)
+					fmt.Println("=====================================")
+					return
+				}
+
+				eulaPath := filepath.Join(serverDir, "eula.txt")
+				needAskEULA := true
+				if _, err := os.Stat(eulaPath); err == nil {
+					eulaFile, err := os.ReadFile(eulaPath)
+					if err == nil && strings.Contains(string(eulaFile), "eula=true") {
+						needAskEULA = false
+					}
+				}
+				if needAskEULA {
+					fmt.Print(internal.GetTranslation("START_EULA_PROMPT"))
+					reader := bufio.NewReader(os.Stdin)
+					answer, _ := reader.ReadString('\n')
+					answer = strings.TrimSpace(strings.ToLower(answer))
+					if answer == "y" || answer == "yes" || answer == "s" || answer == "sim" {
+						f, err := os.Create(eulaPath)
+						if err != nil {
+							fmt.Println(internal.GetTranslation("START_EULA_WRITE_ERROR"), err)
+							return
+						}
+						f.WriteString("eula=true\n")
+						f.Close()
+						fmt.Println(internal.GetTranslation("START_EULA_ACCEPTED"))
+					} else {
+						fmt.Println(internal.GetTranslation("START_EULA_DECLINED"))
+						return
+					}
+				}
+				fmt.Println(internal.GetTranslation("START_JAVA_STARTING"))
+
+				runCmd := exec.Command("java", "-Xmx1024M", "-Xms1024M", "-jar", jarFile, "nogui")
+				runCmd.Dir = serverDir
+				runCmd.Stdout = os.Stdout
+				runCmd.Stderr = os.Stderr
+
+				// Start the server process
+				err := runCmd.Run()
+				if err != nil {
+					fmt.Printf(internal.GetTranslation("START_JAVA_ERROR"), err)
+					fmt.Println()
+				}
+
+				exitStatus := getExitStatus(err)
+				if manualExit || !autoRestart || exitStatus == 0 || exitStatus == 130 || exitStatus == 143 {
+					// exitStatus 130/143 is SIGINT/SIGTERM (Ctrl+C)
+					break
+				}
+				fmt.Println("Server crashed or was killed unexpectedly. Restarting in 5 seconds...")
+				time.Sleep(5 * time.Second)
+			} else if isBedrock {
+				bedrockDir := ""
+				for _, f := range files {
+					if strings.HasPrefix(f.Name(), "bedrock-server") && f.IsDir() {
+						bedrockDir = filepath.Join(serverDir, f.Name())
+						break
+					}
+				}
+				if bedrockDir == "" {
+					fmt.Println(internal.GetTranslation("START_BEDROCK_NOT_FOUND"))
+					return
+				}
+
+				bedrockBinary := filepath.Join(bedrockDir, "bedrock_server")
+				if _, err := os.Stat(bedrockBinary); err != nil {
+					bedrockBinary += ".exe"
+				}
+				fmt.Println(internal.GetTranslation("START_BEDROCK_STARTING"))
+
+				runCmd := exec.Command(bedrockBinary)
+				runCmd.Dir = bedrockDir
+				runCmd.Stdout = os.Stdout
+				runCmd.Stderr = os.Stderr
+
+				err := runCmd.Run()
+				if err != nil {
+					fmt.Printf(internal.GetTranslation("START_BEDROCK_ERROR"), err)
+					fmt.Println()
+				}
+
+				exitStatus := getExitStatus(err)
+				if manualExit || !autoRestart || exitStatus == 0 || exitStatus == 130 || exitStatus == 143 {
+					break
+				}
+				fmt.Println("Server crashed or was killed unexpectedly. Restarting in 5 seconds...")
+				time.Sleep(5 * time.Second)
+			} else {
+				break
 			}
 		}
 	},
+}
+
+func getExitStatus(err error) int {
+	if err == nil {
+		return 0
+	}
+	if exitErr, ok := err.(*exec.ExitError); ok {
+		if status, ok := exitErr.Sys().(syscall.WaitStatus); ok {
+			return status.ExitStatus()
+		}
+	}
+	return -1
 }
 
 func checkJava21() (bool, string) {
