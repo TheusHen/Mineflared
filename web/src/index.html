@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Minecraft Server Configurator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            background: linear-gradient(135deg, #232526 0%, #1c1c1c 100%);
+            color: #eee;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 750px;
+            margin: 3em auto;
+            background: #292e39d8;
+            border-radius: 15px;
+            padding: 2em 2.5em;
+            box-shadow: 0 8px 32px 0 #000a;
+            overflow: hidden;
+            animation: fadeIn 1s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(40px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 1.25em;
+            letter-spacing: 2px;
+        }
+        .section {
+            margin-bottom: 2.2em;
+        }
+        label { display: block; margin-top: 1em; }
+        .files { margin: 1em 0 0.5em 0; }
+        .files span {
+            cursor: pointer;
+            color: #7fc3ff;
+            margin-right: 1.2em;
+            padding: 2px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+            user-select: none;
+        }
+        .files span:hover {
+            background: #385c7a85;
+        }
+        .files span.active {
+            text-decoration: underline;
+            font-weight: bold;
+            background: #385c7a;
+        }
+        .gui-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5em;
+        }
+        .gui-table td, .gui-table th {
+            padding: 7px 9px;
+        }
+        .gui-table th {
+            text-align: left;
+            color: #b8d1ff;
+            font-size: 1.04em;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+            vertical-align: middle;
+        }
+        .switch input { display: none; }
+        .slider {
+            position: absolute; cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #36404a;
+            border-radius: 24px;
+            transition: background .3s;
+        }
+        .switch input:checked + .slider {
+            background: #36d66a;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px; width: 20px;
+            left: 2px; bottom: 2px;
+            background: #fff;
+            border-radius: 50%;
+            transition: .3s;
+        }
+        .switch input:checked + .slider:before {
+            transform: translateX(20px);
+            background: #c2ffd8;
+        }
+        input[type=text], input[type=number] {
+            width: 95%;
+            background: #13181e;
+            color: #fff;
+            border: 1px solid #2a3542;
+            border-radius: 6px;
+            padding: 7px 10px;
+            margin: 0.04em 0 0.1em 0;
+            font-size: 1em;
+            transition: border 0.2s;
+        }
+        input[type=text]:focus, input[type=number]:focus {
+            border: 1.7px solid #53baff;
+            outline: none;
+        }
+        button {
+            background: linear-gradient(90deg, #53baff 0%, #2e8dff 100%);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 28px;
+            margin: 0.5em 0;
+            font-size: 1.07em;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #0002;
+            transition: background 0.2s, transform 0.15s;
+        }
+        button:active { transform: scale(0.98);}
+        .success { color: #8fff8f; font-size: 1.05em;}
+        .error { color: #ff6b6b; font-size: 1.05em;}
+        .list { margin: 0.5em 0 1em 0; }
+        .list span {
+            margin: 0 1.1em 0 0;
+            background: #181f29;
+            border-radius: 4px;
+            padding: 3px 10px;
+            font-size: 0.99em;
+            color: #b4e1ff;
+            display: inline-block;
+        }
+        .hide { display: none !important; }
+        .fade-in {
+            animation: fadeIn .4s;
+        }
+        .fade-out {
+            animation: fadeOut .4s;
+        }
+        @keyframes fadeOut {
+            from { opacity: 1;}
+            to { opacity: 0;}
+        }
+        .gui-table tr {
+            border-bottom: 1px solid #2e3440;
+        }
+        .gui-table tr:last-child {
+            border-bottom: none;
+        }
+        .gui-table input[type=text], .gui-table input[type=number] {
+            margin: 0;
+            font-size: 0.98em;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Minecraft Server Configurator</h1>
+    <div class="section">
+        <label>
+            <b>Edit file:</b>
+            <div class="files" id="file-list"></div>
+            <div id="gui-editor" class="fade-in"></div>
+            <textarea id="file-content" spellcheck="false" class="hide"></textarea>
+        </label>
+        <div>
+            <button id="save-btn">Save</button>
+            <span id="status"></span>
+        </div>
+    </div>
+    <div class="section" id="mods-section">
+        <h3>Mods</h3>
+        <div class="list" id="mod-list"></div>
+        <input id="mod-url" type="text" placeholder="Mod .jar download URL">
+        <button id="add-mod-btn">Add Mod</button>
+        <span id="mod-status"></span>
+    </div>
+    <div class="section" id="plugins-section">
+        <h3>Plugins</h3>
+        <div class="list" id="plugin-list"></div>
+        <input id="plugin-url" type="text" placeholder="Plugin .jar download URL">
+        <button id="add-plugin-btn">Add Plugin</button>
+        <span id="plugin-status"></span>
+    </div>
+</div>
+<script>
+    let fileListEl = document.getElementById('file-list');
+    let fileContentEl = document.getElementById('file-content');
+    let guiEditorEl = document.getElementById('gui-editor');
+    let saveBtn = document.getElementById('save-btn');
+    let statusEl = document.getElementById('status');
+    let modListEl = document.getElementById('mod-list');
+    let modUrlEl = document.getElementById('mod-url');
+    let addModBtn = document.getElementById('add-mod-btn');
+    let modStatusEl = document.getElementById('mod-status');
+    let pluginListEl = document.getElementById('plugin-list');
+    let pluginUrlEl = document.getElementById('plugin-url');
+    let addPluginBtn = document.getElementById('add-plugin-btn');
+    let pluginStatusEl = document.getElementById('plugin-status');
+    let modsSection = document.getElementById('mods-section');
+    let pluginsSection = document.getElementById('plugins-section');
+    let currentFile = "server.properties";
+    let serverType = "java";
+
+    function showStatus(el, msg, success=true) {
+        el.textContent = msg;
+        el.className = success ? "success" : "error";
+        setTimeout(() => { el.textContent = ""; }, 3800);
+    }
+
+    function detectServerType() {
+        fetch('/files/list?server=' + encodeURIComponent(window.serverName))
+            .then(r=>r.json())
+            .then(data=>{
+                let hasMods = false, hasPlugins = false;
+                let files = data.files || [];
+                fetch('/mods/list').then(r=>r.json()).then(mods=>{
+                    if ((mods.mods||[]).length) hasMods = true;
+                    fetch('/plugins/list').then(r=>r.json()).then(plugins=>{
+                        if ((plugins.plugins||[]).length) hasPlugins = true;
+                        // Java: plugins, mods. Bedrock: neither, or only mods (bedrock mods = behavior/resource packs, mas aqui só para sumir)
+                        if (files.some(f=>f.endsWith('.jar')) || hasPlugins) {
+                            serverType = "java";
+                            modsSection.classList.remove('hide');
+                            pluginsSection.classList.remove('hide');
+                        } else {
+                            serverType = "bedrock";
+                            modsSection.classList.add('hide');
+                            pluginsSection.classList.add('hide');
+                        }
+                    });
+                });
+            });
+    }
+
+    function loadFiles() {
+        fetch(`/files/list?server=${encodeURIComponent(window.serverName)}`).then(r=>r.json()).then(data=>{
+            fileListEl.innerHTML = "";
+            (data.files||[]).forEach(f=>{
+                let span = document.createElement('span');
+                span.textContent = f;
+                span.onclick = () => { selectFile(f); };
+                fileListEl.appendChild(span);
+            });
+            if (data.files && data.files.length) {
+                selectFile("server.properties");
+            }
+        });
+    }
+
+    function selectFile(filename) {
+        currentFile = filename;
+        Array.from(fileListEl.children).forEach(span=>{
+            span.classList.toggle('active', span.textContent === filename);
+        });
+        // GUI for server.properties
+        if (filename === "server.properties") {
+            guiEditorEl.classList.remove('fade-out');
+            guiEditorEl.classList.add('fade-in');
+            fileContentEl.classList.add('hide');
+            guiEditorEl.classList.remove('hide');
+            fetch(`/files/read?server=${encodeURIComponent(window.serverName)}&file=server.properties`)
+                .then(r=> r.ok ? r.text() : "")
+                .then(txt=>{
+                    renderServerProperties(txt);
+                });
+        } else {
+            guiEditorEl.classList.add('hide');
+            fileContentEl.classList.remove('hide');
+            fetch(`/files/read?server=${encodeURIComponent(window.serverName)}&file=${encodeURIComponent(currentFile)}`)
+                .then(r=> r.ok ? r.text() : "")
+                .then(txt=>{
+                    fileContentEl.value = txt;
+                });
+        }
+    }
+
+    function renderServerProperties(txt) {
+        let lines = txt.split('\n');
+        let kvs = [];
+        for (let line of lines) {
+            if (!line.trim() || line.trim().startsWith('#')) continue;
+            let idx = line.indexOf('=');
+            if (idx === -1) continue;
+            let k = line.slice(0, idx).trim();
+            let v = line.slice(idx+1).trim();
+            kvs.push([k, v]);
+        }
+        let html = `<table class="gui-table fade-in"><tr><th>Property</th><th>Value</th></tr>`;
+        for (let [k, v] of kvs) {
+            if (v === "true" || v === "false") {
+                html += `<tr><td>${k}</td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" data-key="${k}" ${v==="true"?"checked":""}>
+                            <span class="slider"></span>
+                        </label>
+                    </td></tr>`;
+            } else if (!isNaN(Number(v))) {
+                html += `<tr><td>${k}</td>
+                    <td><input type="number" data-key="${k}" value="${v}" /></td></tr>`;
+            } else {
+                html += `<tr><td>${k}</td>
+                    <td><input type="text" data-key="${k}" value="${v.replace(/"/g,"&quot;")}" /></td></tr>`;
+            }
+        }
+        html += `</table>`;
+        guiEditorEl.innerHTML = html;
+    }
+
+    saveBtn.onclick = function() {
+        if (currentFile === "server.properties") {
+            // Monta novo texto a partir do GUI
+            let table = guiEditorEl.querySelector('.gui-table');
+            if (!table) return;
+            let kvs = [];
+            let inputs = table.querySelectorAll('input');
+            for (let inp of inputs) {
+                let k = inp.dataset.key;
+                let v;
+                if (inp.type === "checkbox") v = inp.checked ? "true" : "false";
+                else v = inp.value;
+                kvs.push([k, v]);
+            }
+            // Mantém comentários originais
+            fetch(`/files/read?server=${encodeURIComponent(window.serverName)}&file=server.properties`)
+                .then(r=> r.ok ? r.text() : "")
+                .then(txt=>{
+                    let lines = txt.split('\n');
+                    let out = [];
+                    let done = {};
+                    for (let line of lines) {
+                        if (!line.trim() || line.trim().startsWith('#')) {
+                            out.push(line);
+                            continue;
+                        }
+                        let idx = line.indexOf('=');
+                        if (idx === -1) { out.push(line); continue; }
+                        let k = line.slice(0, idx).trim();
+                        let found = kvs.find(arr=>arr[0]===k);
+                        if (found) {
+                            out.push(`${k}=${found[1]}`);
+                            done[k]=1;
+                        } else {
+                            out.push(line);
+                        }
+                    }
+                    for (let [k,v] of kvs) {
+                        if (!done[k]) out.push(`${k}=${v}`);
+                    }
+                    fetch(`/files/save?server=${encodeURIComponent(window.serverName)}&file=server.properties`, {
+                        method: 'POST',
+                        body: out.join('\n')
+                    }).then(resp=>{
+                        if (resp.ok) showStatus(statusEl, "File saved!", true);
+                        else showStatus(statusEl, "Error saving file", false);
+                    });
+                });
+        } else {
+            fetch(`/files/save?server=${encodeURIComponent(window.serverName)}&file=${encodeURIComponent(currentFile)}`, {
+                method: 'POST',
+                body: fileContentEl.value
+            }).then(resp=>{
+                if (resp.ok) showStatus(statusEl, "File saved!", true);
+                else showStatus(statusEl, "Error saving file", false);
+            });
+        }
+    };
+
+    function loadMods() {
+        fetch(`/mods/list`).then(r=>r.json()).then(data=>{
+            modListEl.innerHTML = (data.mods||[]).map(m=>`<span>${m}</span>`).join("");
+        });
+    }
+    addModBtn.onclick = function() {
+        let url = modUrlEl.value.trim();
+        if (!url) return;
+        fetch(`/mods/add?url=${encodeURIComponent(url)}`).then(resp=>{
+            if (resp.ok) {
+                showStatus(modStatusEl, "Mod added!", true);
+                loadMods();
+            } else showStatus(modStatusEl, "Error adding mod", false);
+        });
+    };
+
+    function loadPlugins() {
+        fetch(`/plugins/list`).then(r=>r.json()).then(data=>{
+            pluginListEl.innerHTML = (data.plugins||[]).map(m=>`<span>${m}</span>`).join("");
+        });
+    }
+    addPluginBtn.onclick = function() {
+        let url = pluginUrlEl.value.trim();
+        if (!url) return;
+        fetch(`/plugins/add?url=${encodeURIComponent(url)}`).then(resp=>{
+            if (resp.ok) {
+                showStatus(pluginStatusEl, "Plugin added!", true);
+                loadPlugins();
+            } else showStatus(pluginStatusEl, "Error adding plugin", false);
+        });
+    };
+
+    window.onload = function() {
+        // Pega server name da query ou path
+        let params = new URLSearchParams(window.location.search);
+        window.serverName = params.get("server") || "";
+        if (!window.serverName) {
+            window.serverName = window.location.pathname.replace(/^\//, "");
+        }
+        if (!window.serverName) {
+            fetch('/servers').then(r=>r.json()).then(data=>{
+                if (data.servers && data.servers.length) {
+                    window.serverName = data.servers[0];
+                    loadFiles();
+                    loadMods();
+                    loadPlugins();
+                    detectServerType();
+                }
+            });
+        } else {
+            loadFiles();
+            loadMods();
+            loadPlugins();
+            detectServerType();
+        }
+    }
+</script>
+</body>
+</html>

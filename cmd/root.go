@@ -17,7 +17,6 @@ func Execute() {
 
 	rootCmd.AddCommand(loginCmd)
 	rootCmd.AddCommand(createCmd)
-	rootCmd.AddCommand(statusCmd)
 
 	rootCmd.Execute()
 }

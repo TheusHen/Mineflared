@@ -1,14 +1,13 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/pkg/browser"
 	"github.com/spf13/cobra"
 	"mineflared-cli/internal"
 	"net"
 	"net/http"
-	"os"
-	"encoding/json"
 )
 
 var loginCmd = &cobra.Command{

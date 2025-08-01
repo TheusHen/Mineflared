@@ -18,7 +18,6 @@ func GetIP() string {
 	return ""
 }
 
-// Busca IP via ipwho.is
 func fetchIPFromExternal() (string, error) {
 	client := &http.Client{Timeout: 5 * time.Second}
 	resp, err := client.Get("https://ipwho.is/")

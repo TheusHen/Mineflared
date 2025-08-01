@@ -1,0 +1,20 @@
+# Ignore Go files (not needed in the NPM package)
+../*.go
+../go.mod
+../go.sum
+../.env
+
+# Ignore internal Go folders
+../cmd/
+../config/
+../httpclient/
+../.idea/
+../frontend/
+
+# Ignore Git and GitHub metadata
+../.git/
+../.github/
+
+# Ignore other metadata
+*.md
+LICENSE

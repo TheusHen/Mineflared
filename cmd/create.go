@@ -11,9 +11,11 @@ import (
 	"mineflared-cli/internal"
 	"net/http"
 	"os"
+	"os/exec"
 	"os/user"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 func downloadFile(url, dest string) error {
@@ -154,8 +156,9 @@ var createCmd = &cobra.Command{
 			return
 		}
 
-		usr, _ := user.Current()
-		serverDir := filepath.Join(usr.HomeDir, "mineflared", serverName)
+		_, _ = user.Current()
+		// CRIAR NA /servers (em vez de home)
+		serverDir := filepath.Join(string(os.PathSeparator), "servers", serverName)
 		if err := os.MkdirAll(serverDir, 0755); err != nil {
 			fmt.Println(internal.GetTranslation("CREATE_DIR_ERROR"), err)
 			return
@@ -269,9 +272,32 @@ var createCmd = &cobra.Command{
 				}
 			}
 			fmt.Println(internal.GetTranslation("CREATE_JAVA_SERVER_STARTING"))
-			runCmd := fmt.Sprintf("java -Xmx1024M -Xms1024M -jar %s nogui", serverChoice.FileName)
-			fmt.Printf(internal.GetTranslation("CREATE_JAVA_SERVER_EXECUTE"), runCmd)
+
+			// INICIAR O SERVIDOR JAVA
+			runCmd := exec.Command("java", "-Xmx1024M", "-Xms1024M", "-jar", serverChoice.FileName, "nogui")
+			runCmd.Dir = serverDir
+			runCmd.Stdout = os.Stdout
+			runCmd.Stderr = os.Stderr
+
+			if err := runCmd.Start(); err != nil {
+				fmt.Printf(internal.GetTranslation("CREATE_JAVA_SERVER_START_ERROR"), err)
+				fmt.Println()
+			} else {
+				fmt.Printf(internal.GetTranslation("CREATE_JAVA_SERVER_EXECUTE"), serverChoice.FileName)
+				fmt.Println()
+				// Espera um pouco para garantir que os arquivos EULA/server inicializem
+				time.Sleep(8 * time.Second)
+				// Mata o processo Java
+				if err := runCmd.Process.Kill(); err != nil {
+					fmt.Printf(internal.GetTranslation("CREATE_JAVA_SERVER_KILL_ERROR"), err)
+					fmt.Println()
+				} else {
+					fmt.Println(internal.GetTranslation("CREATE_JAVA_SERVER_KILLED"))
+				}
+			}
+			fmt.Printf(internal.GetTranslation("CREATE_JAVA_SERVER_START_INFO"), serverName)
 			fmt.Println()
+
 		} else if tipo == "bedrock" {
 			fmt.Println(internal.GetTranslation("CREATE_BEDROCK_EXTRACTING"))
 			if err := unzip(filePath, serverDir); err != nil {
@@ -331,6 +357,8 @@ var createCmd = &cobra.Command{
 				}
 			}
 			fmt.Println(internal.GetTranslation("CREATE_BEDROCK_READY"))
+			fmt.Printf(internal.GetTranslation("CREATE_BEDROCK_SERVER_START_INFO"), serverName)
+			fmt.Println()
 		}
 
 		body := map[string]string{
