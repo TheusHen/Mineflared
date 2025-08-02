@@ -40,10 +40,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mineflared-binaries
-          path: npm-wrapper/bin/
+          path: bin/
 
       - name: Publish to npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish
+        run: |
+          shopt -s dotglob  
+          mv npm-wrapper/* .
+          npm publish
 
