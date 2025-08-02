@@ -21,8 +21,8 @@ var loginCmd = &cobra.Command{
 			return
 		}
 
-		backendURL := internal.GetEnv("BACKEND_URL", "http://localhost:3000")
-		callbackURL := internal.GetEnv("CALLBACK_URL", "http://localhost:4500/callback")
+		backendURL := "https://mineserver.theushen.me" // Valor do .env
+		callbackURL := "http://localhost:4500/callback" // Valor do .env
 		authURL := fmt.Sprintf("%s/auth/github/login?ip=%s&callback=%s", backendURL, ip, callbackURL)
 
 		fmt.Println(internal.GetTranslation("LOGIN_BROWSER_OPENING"))
@@ -78,3 +78,4 @@ func waitForTokenViaLocalhost() string {
 	token := <-tokenChan
 	return token
 }
+

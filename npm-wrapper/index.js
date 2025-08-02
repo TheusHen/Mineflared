@@ -9,7 +9,7 @@ let binary = '';
 
 if (platform === 'linux') binary = 'mineflared-linux';
 else if (platform === 'darwin') binary = 'mineflared-darwin';
-else if (platform === 'win32') binary = 'mineflared-windows.exe';
+else if (platform === 'win32' || platform === 'win64') binary = 'mineflared-windows.exe';
 else {
     console.error(`Unsupported platform: ${platform}`);
     process.exit(1);

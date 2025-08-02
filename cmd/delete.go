@@ -18,7 +18,7 @@ var deleteCmd = &cobra.Command{
 			return
 		}
 
-		backendURL := internal.GetEnv("BACKEND_URL", "http://localhost:3000")
+		backendURL := "https://mineserver.theushen.me" // Valor do .env
 		deleteURL := backendURL + "/delete"
 
 		fmt.Print(internal.GetTranslation("DELETE_CONFIRM_PROMPT"))
@@ -63,3 +63,4 @@ var deleteCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(deleteCmd)
 }
+

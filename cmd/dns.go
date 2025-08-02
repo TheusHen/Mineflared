@@ -45,7 +45,7 @@ func getCurrentIP() string {
 func updateDNSRequest(token, ip string) error {
 	body := map[string]string{"ip": ip}
 	b, _ := json.Marshal(body)
-	dnsCreateURL := internal.GetEnv("DNS_CREATE_URL", "http://localhost:3000/dns/create")
+	dnsCreateURL := "https://mineserver.theushen.me/create" // Valor do .env
 	req, _ := http.NewRequest("POST", dnsCreateURL, bytes.NewReader(b))
 	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("Content-Type", "application/json")
@@ -59,3 +59,4 @@ func updateDNSRequest(token, ip string) error {
 	}
 	return nil
 }
+

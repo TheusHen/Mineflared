@@ -1,21 +1,42 @@
-// Do not run this file in Windows because it uses `execSync` which is not compatible with Windows for this purpose.
-// If you want to run in Windows implement `cross-env`.
+#!/usr/bin/env node
 
-const { execSync } = require("child_process");
-const fs = require("fs");
-const path = require("path");
+const { spawnSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
 
-const BIN_DIR = path.join(__dirname, "bin");
+const BIN_DIR = path.join(__dirname, 'bin');
 fs.mkdirSync(BIN_DIR, { recursive: true });
 
-console.log("Building Go binaries...");
+console.log('Building Go binaries...');
 
-try {
-    execSync("GOOS=linux GOARCH=amd64 go build -o bin/mineflared-linux", { stdio: "inherit" });
-    execSync("GOOS=darwin GOARCH=amd64 go build -o bin/mineflared-darwin", { stdio: "inherit" });
-    execSync("GOOS=windows GOARCH=amd64 go build -o bin/mineflared-windows.exe", { stdio: "inherit" });
-    console.log("✅ All binaries built successfully.");
-} catch (e) {
-    console.error("❌ Failed to build binaries:", e.message);
-    process.exit(1);
+const builds = [
+    { goos: 'linux', goarch: 'amd64', output: 'mineflared-linux' },
+    { goos: 'darwin', goarch: 'amd64', output: 'mineflared-darwin' },
+    { goos: 'windows', goarch: 'amd64', output: 'mineflared-windows.exe' },
+];
+
+function build(goos, goarch, output) {
+    const env = {
+        ...process.env,
+        GOOS: goos,
+        GOARCH: goarch,
+    };
+
+    const result = spawnSync('go', ['build', '-o', path.join(BIN_DIR, output)], {
+        env,
+        stdio: 'inherit',
+        shell: true
+    });
+
+    if (result.status !== 0) {
+        console.error(`❌ Failed to build for ${goos}/${goarch}`);
+        process.exit(1);
+    }
 }
+
+for (const { goos, goarch, output } of builds) {
+    build(goos, goarch, output);
+}
+
+console.log('✅ All binaries built successfully.');

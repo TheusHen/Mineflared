@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-	internal.LoadEnv()
 	internal.SelfInstall()
 
 	configDir, _ := os.UserConfigDir()

@@ -25,14 +25,6 @@ jobs:
           npm install
           cd ..
 
-      - name: Create .env file from secrets
-        run: |
-          echo "BACKEND_URL=${{ secrets.BACKEND_URL }}" >> .env
-          echo "CALLBACK_URL=${{ secrets.CALLBACK_URL }}" >> .env
-          echo "DNS_CREATE_URL=${{ secrets.DNS_CREATE_URL }}" >> .env
-          echo "SERVER_CREATE_URL=${{ secrets.SERVER_CREATE_URL }}" >> .env
-          echo "SERVER_STATUS_URL=${{ secrets.SERVER_STATUS_URL }}" >> .env
-
       - name: Build binaries
         run: node npm-wrapper/build.js
 
