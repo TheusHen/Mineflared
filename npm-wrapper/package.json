@@ -1,6 +1,6 @@
 {
   "name": "mineflared",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Peer-to-peer Minecraft server hosting CLI",
   "author": "Matheus Henrique",
   "license": "MIT",
