@@ -8,8 +8,7 @@
     "mineflared": "./index.js"
   },
   "scripts": {
-    "build": "node build.js",
-    "prepare": "npm run build"
+    "build": "node build.js"
   },
   "engines": {
     "node": ">=14"
