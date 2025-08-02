@@ -119,6 +119,15 @@ var startCmd = &cobra.Command{
 						f.WriteString("eula=true\n")
 						f.Close()
 						fmt.Println(internal.GetTranslation("START_EULA_ACCEPTED"))
+
+						username := internal.GetConfig().Username
+						fmt.Println()
+						fmt.Println("=====================================")
+						fmt.Printf("Bedrock: https://%s.mineserver.theushen.me:25565\n", username)
+						fmt.Printf("Java:    https://%s.mineserver.theushen.me:19132\n", username)
+						fmt.Println("=====================================")
+						fmt.Println()
+
 					} else {
 						fmt.Println(internal.GetTranslation("START_EULA_DECLINED"))
 						return

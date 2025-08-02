@@ -9,8 +9,8 @@ import (
 )
 
 func main() {
-	// Load environment variables from .env file
 	internal.LoadEnv()
+	internal.SelfInstall()
 
 	configDir, _ := os.UserConfigDir()
 	mineDir := filepath.Join(configDir, "minecli")
@@ -46,6 +46,6 @@ func selectLanguageOnFirstRun() {
 	case 2:
 		internal.SetLanguage("pt")
 	default:
-		internal.SetLanguage("pt") // Default to Portuguese
+		internal.SetLanguage("pt")
 	}
 }

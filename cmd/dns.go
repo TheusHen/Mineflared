@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"mineflared-cli/internal"
+	"net/http"
 )
 
 func UpdateDNS() {

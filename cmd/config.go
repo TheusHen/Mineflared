@@ -33,7 +33,7 @@ var configCmd = &cobra.Command{
 		cmdBackend := exec.Command("go", "run", backendPath, serverName)
 		cmdBackend.Stdout = os.Stdout
 		cmdBackend.Stderr = os.Stderr
-		cmdBackend.Dir, _ = os.Getwd() // Garante que o diretório de trabalho é o projeto
+		cmdBackend.Dir, _ = os.Getwd()
 
 		go func() {
 			time.Sleep(2 * time.Second)

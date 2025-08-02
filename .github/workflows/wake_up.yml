@@ -1,0 +1,12 @@
+name: Wake Up Server
+
+on:
+  schedule:
+    - cron: "*/1 * * * *"
+
+jobs:
+  wake_up:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send request to keep server awake
+        run: curl -X GET http://mineserver.theushen.me/

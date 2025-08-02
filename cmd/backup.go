@@ -79,7 +79,6 @@ var backupCmd = &cobra.Command{
 		}
 
 		backupFileName := fmt.Sprintf("%s_backup.%s", serverName, format)
-		// Interface simples de diretórios
 		fmt.Println(internal.GetTranslation("BACKUP_CHOOSE_PATH"))
 		cwd, _ := os.Getwd()
 		dirs, _ := os.ReadDir(cwd)

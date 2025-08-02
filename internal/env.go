@@ -1,19 +1,27 @@
 package internal
 
 import (
+	"fmt"
 	"github.com/joho/godotenv"
 	"os"
 	"path/filepath"
 )
 
 func LoadEnv() {
+	// Tenta carregar o .env no diretório atual
 	err := godotenv.Load()
 	if err != nil {
-		execPath, err := os.Executable()
-		if err == nil {
+		// Se falhar, tenta carregar no diretório do executável
+		execPath, execErr := os.Executable()
+		if execErr == nil {
 			execDir := filepath.Dir(execPath)
 			envPath := filepath.Join(execDir, ".env")
-			_ = godotenv.Load(envPath)
+			err = godotenv.Load(envPath)
+		}
+
+		// Se ainda falhar, exibe uma mensagem de erro
+		if err != nil {
+			fmt.Println("Aviso: Não foi possível carregar o arquivo .env")
 		}
 	}
 }

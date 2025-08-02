@@ -23,7 +23,7 @@ var EnglishTranslations = map[string]string{
 	"DELETE_REQUEST_FAILED": "Failed to connect to server:",
 	"DELETE_SUCCESS":        "Account deleted successfully.",
 	"DELETE_ERROR":          "Error deleting account:",
-	
+
 	// List command
 	"LIST_SHORT_DESC":        "List all local servers",
 	"LIST_SERVERS_DIR_ERROR": "Could not open servers directory: %s",
@@ -127,16 +127,18 @@ var EnglishTranslations = map[string]string{
 	"START_JAVA21_REQUIRED":     "[!!!] JAVA 21 or newer is required to run this server. Download at https://adoptium.net/temurin/releases/?version=21, install, close and reopen your terminal, and try again.",
 
 	// Status command
-	"STATUS_SHORT_DESC":     "Check server status",
-	"STATUS_LOGIN_REQUIRED": "❌ You need to be logged in first!",
-	"STATUS_REQUEST_ERROR":  "❌ Error creating request:",
-	"STATUS_QUERY_ERROR":    "❌ Error querying status:",
-	"STATUS_DECODE_ERROR":   "❌ Error decoding response:",
-	"STATUS_API_ERROR":      "❌ Error: %v",
-	"STATUS_UNKNOWN_ERROR":  "❌ Unknown error. HTTP Code: %d",
-	"STATUS_SERVER_STATUS":  "✅ Server status:",
-	"STATUS_STATUS_LINE":    "   • Status: %s",
-	"STATUS_MESSAGE_LINE":   "   • Message: %s",
+	"STATUS_BROWSER_ERROR":   "❌ Error opening browser:",
+	"STATUS_OPENING_BROWSER": "Opening server status in browser...",
+	"STATUS_SHORT_DESC":      "Check server status",
+	"STATUS_LOGIN_REQUIRED":  "❌ You need to be logged in first!",
+	"STATUS_REQUEST_ERROR":   "❌ Error creating request:",
+	"STATUS_QUERY_ERROR":     "❌ Error querying status:",
+	"STATUS_DECODE_ERROR":    "❌ Error decoding response:",
+	"STATUS_API_ERROR":       "❌ Error: %v",
+	"STATUS_UNKNOWN_ERROR":   "❌ Unknown error. HTTP Code: %d",
+	"STATUS_SERVER_STATUS":   "✅ Server status:",
+	"STATUS_STATUS_LINE":     "   • Status: %s",
+	"STATUS_MESSAGE_LINE":    "   • Message: %s",
 
 	// DNS update
 	"DNS_IP_ERROR":       "Could not get current IP.",
@@ -285,16 +287,18 @@ var PortugueseTranslations = map[string]string{
 	"START_JAVA21_REQUIRED":     "[!!!] É necessário ter o JAVA 21 ou superior para rodar este servidor. Baixe em https://adoptium.net/temurin/releases/?version=21, instale, feche e reabra o terminal e tente novamente.",
 
 	// Status command
-	"STATUS_SHORT_DESC":     "Verifica o status do servidor",
-	"STATUS_LOGIN_REQUIRED": "❌ Você precisa estar logado primeiro!",
-	"STATUS_REQUEST_ERROR":  "❌ Erro ao criar requisição:",
-	"STATUS_QUERY_ERROR":    "❌ Erro ao consultar status:",
-	"STATUS_DECODE_ERROR":   "❌ Erro ao decodificar resposta:",
-	"STATUS_API_ERROR":      "❌ Erro: %v",
-	"STATUS_UNKNOWN_ERROR":  "❌ Erro desconhecido. Código HTTP: %d",
-	"STATUS_SERVER_STATUS":  "✅ Status do servidor:",
-	"STATUS_STATUS_LINE":    "   • Status: %s",
-	"STATUS_MESSAGE_LINE":   "   • Mensagem: %s",
+	"STATUS_BROWSER_ERROR":   "❌ Erro ao abrir o navegador:",
+	"STATUS_OPENING_BROWSER": "Abrindo status do servidor no navegador...",
+	"STATUS_SHORT_DESC":      "Verifica o status do servidor",
+	"STATUS_LOGIN_REQUIRED":  "❌ Você precisa estar logado primeiro!",
+	"STATUS_REQUEST_ERROR":   "❌ Erro ao criar requisição:",
+	"STATUS_QUERY_ERROR":     "❌ Erro ao consultar status:",
+	"STATUS_DECODE_ERROR":    "❌ Erro ao decodificar resposta:",
+	"STATUS_API_ERROR":       "❌ Erro: %v",
+	"STATUS_UNKNOWN_ERROR":   "❌ Erro desconhecido. Código HTTP: %d",
+	"STATUS_SERVER_STATUS":   "✅ Status do servidor:",
+	"STATUS_STATUS_LINE":     "   • Status: %s",
+	"STATUS_MESSAGE_LINE":    "   • Mensagem: %s",
 
 	// DNS update
 	"DNS_IP_ERROR":       "Não foi possível obter o IP atual.",
