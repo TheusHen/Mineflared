@@ -21,7 +21,10 @@ jobs:
           registry-url: 'https://registry.npmjs.org/'
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          cd npm-wrapper
+          npm install
+          cd ..
 
       - name: Create .env file from secrets
         run: |
@@ -32,7 +35,7 @@ jobs:
           echo "SERVER_STATUS_URL=${{ secrets.SERVER_STATUS_URL }}" >> .env
 
       - name: Build binaries
-        run: npm run build
+        run:  node npm-wrapper/build.js
 
       - name: Upload binaries as artifact
         uses: actions/upload-artifact@v4
