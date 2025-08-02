@@ -27,7 +27,7 @@ npm install -g mineflared
 Or via PowerShell:
 
 ```powershell
-iex (iwr -Uri "https://install.mineflared.theushen.me/install.ps1").Content
+iex (iwr -Uri "https://mineflared.theushen.me/install.ps1").Content
 ```
 
 ---
