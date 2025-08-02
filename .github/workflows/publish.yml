@@ -34,7 +34,7 @@ jobs:
           echo "SERVER_STATUS_URL=${{ secrets.SERVER_STATUS_URL }}" >> .env
 
       - name: Build binaries
-        run:  node npm-wrapper/build.js
+        run: node npm-wrapper/build.js
 
       - name: Upload binaries as artifact
         uses: actions/upload-artifact@v4
@@ -42,11 +42,11 @@ jobs:
           name: mineflared-binaries
           path: bin/
 
+      - name: Move npm-wrapper contents to root
+        run: |
+          rsync -a --remove-source-files npm-wrapper/ . && rm -r npm-wrapper
+
       - name: Publish to npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          shopt -s dotglob  
-          mv npm-wrapper/* .
-          npm publish
-
+        run: npm publish
