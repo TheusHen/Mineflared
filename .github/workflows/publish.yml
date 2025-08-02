@@ -32,7 +32,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mineflared-binaries
-          path: bin/
+          path: npm-wrapper/bin/
 
       - name: Move npm-wrapper contents to root
         run: |
