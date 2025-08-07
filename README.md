@@ -4,6 +4,21 @@
 [![npm version](https://img.shields.io/npm/v/mineflared?style=flat-square)](https://www.npmjs.com/package/mineflared)
 [![Build](https://github.com/TheusHen/Mineflared/actions/workflows/publish.yml/badge.svg)](https://github.com/TheusHen/Mineflared/actions)
 
+> [!CAUTION]
+> Version V3 has been permanently discontinued and is awaiting V4, which will fix **critical bugs**.
+
+Understand these bugs:
+- It is necessary to add security for creating Minecraft-only servers and prevent scam sites.
+
+- The DNS configuration for Cloudflare is incorrect and needs to be fixed.
+
+Notes:
+Proxy protection for Bedrock servers will not be possible due to UDP/IP, and Java needs to be updated to support connecting to the default Minecraft port.
+
+> [!IMPORTANT]  
+> API temporarily disabled, will be enabled again in V4. **DO NOT attempt to use Mineflared, errors are expected without the API**
+---
+
 **Host Minecraft servers with a few commands. No VPS, no static IP – Cloudflare protected.**
 
 ---
