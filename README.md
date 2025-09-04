@@ -8,7 +8,7 @@
 > Version V3 has been permanently discontinued and is awaiting V4, which will fix **critical bugs**.
 
 Understand these bugs:
-- It is necessary to add security for creating Minecraft-only servers and prevent scam sites.
+- ✅ **FIXED**: Security for creating Minecraft-only servers and prevention of scam sites implemented.
 
 - The DNS configuration for Cloudflare is incorrect and needs to be fixed.
 
@@ -27,6 +27,7 @@ Proxy protection for Bedrock servers will not be possible due to UDP/IP, and Jav
 
 - ⚡ Instant setup in seconds
 - 🛡️ DDoS protection via Cloudflare  
+- 🔒 **Security validation** to prevent non-Minecraft content
 - 🌐 Dynamic DNS with custom subdomain  
 - 📈 Real-time monitoring  
 - 🔄 Auto-restart on crash  
@@ -69,6 +70,32 @@ mineflared backup <name>    # Create .zip or .rar backup
 mineflared restore          # Restore from backup
 mineflared language         # Change CLI language
 ```
+
+---
+
+## 🔒 Security
+
+Mineflared includes comprehensive security validation to ensure only legitimate Minecraft servers are hosted:
+
+### 🛡️ **Server Validation**
+- **URL Verification**: Only allows downloads from official Minecraft sources (PaperMC, Mojang, Purpur, etc.)
+- **Content Analysis**: Validates JAR files contain Minecraft-specific classes and packages
+- **File Scanning**: Detects and blocks web content (HTML, PHP, JSP, CSS, JS files)
+- **Directory Structure**: Ensures proper Minecraft server structure for both Java and Bedrock
+
+### 🚫 **Blocked Content**
+- Web applications and websites
+- Non-Minecraft server software  
+- Mixed Java/Bedrock configurations
+- Suspicious file uploads
+
+### ✅ **Legitimate Sources**
+- `api.papermc.io` (PaperMC)
+- `piston-data.mojang.com` (Vanilla Minecraft)
+- `api.purpurmc.org` (Purpur)
+- `maven.minecraftforge.net` (Forge)
+- `maven.fabricmc.net` (Fabric)
+- `minecraft.net` (Bedrock)
 
 ---
 
