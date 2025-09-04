@@ -10,7 +10,7 @@
 Understand these bugs:
 - ✅ **FIXED**: Security for creating Minecraft-only servers and prevention of scam sites implemented.
 
-- The DNS configuration for Cloudflare is incorrect and needs to be fixed.
+- ✅ **FIXED**: The DNS configuration for Cloudflare is incorrect and needs to be fixed.
 
 Notes:
 Proxy protection for Bedrock servers will not be possible due to UDP/IP, and Java needs to be updated to support connecting to the default Minecraft port.
