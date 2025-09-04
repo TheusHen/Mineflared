@@ -5,6 +5,7 @@
 *.so
 *.dylib
 mineflared-cli
+mineflared
 
 # Test binary, built with `go test -c`
 *.test
