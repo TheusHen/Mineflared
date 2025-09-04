@@ -68,7 +68,7 @@ func waitForTokenViaLocalhost() string {
 			tokenChan <- ""
 			return
 		}
-		fmt.Fprintf(w, internal.GetTranslation("LOGIN_BROWSER_SUCCESS"))
+		fmt.Fprint(w, internal.GetTranslation("LOGIN_BROWSER_SUCCESS"))
 		tokenChan <- token
 	})
 
