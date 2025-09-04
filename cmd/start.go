@@ -31,6 +31,19 @@ var startCmd = &cobra.Command{
 		lockFile := filepath.Join(serverDir, ".running")
 		configLock := filepath.Join(serverDir, ".configuring")
 
+		// Initialize security validator
+		validator := internal.NewMinecraftServerValidator()
+
+		// Perform security validation before starting
+		fmt.Println("🔒 Performing security validation...")
+		if err := validator.ValidateServerDirectory(serverDir); err != nil {
+			fmt.Printf("❌ Security validation failed: %s\n", err)
+			fmt.Println("Server startup blocked for security reasons.")
+			fmt.Println("Please ensure this is a legitimate Minecraft server.")
+			return
+		}
+		fmt.Println("✅ Server security validation passed")
+
 		if _, err := os.Stat(configLock); err == nil {
 			fmt.Println(internal.GetTranslation("START_CONFIGURING_BLOCK"))
 			return

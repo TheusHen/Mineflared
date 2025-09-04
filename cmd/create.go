@@ -147,6 +147,9 @@ var createCmd = &cobra.Command{
 			return
 		}
 
+		// Initialize security validator
+		validator := internal.NewMinecraftServerValidator()
+
 		var serverName string
 		fmt.Print(internal.GetTranslation("CREATE_SERVER_NAME_PROMPT"))
 		fmt.Scanln(&serverName)
@@ -204,6 +207,15 @@ var createCmd = &cobra.Command{
 			fmt.Println(internal.GetTranslation("CREATE_INVALID_OPTION"))
 			return
 		}
+
+		// Validate server URL before downloading
+		fmt.Println("🔒 Validating server source...")
+		if err := validator.ValidateServerURL(serverChoice.URL); err != nil {
+			fmt.Printf("❌ Security validation failed: %s\n", err)
+			fmt.Println("Only official Minecraft server sources are allowed for security reasons.")
+			return
+		}
+		fmt.Println("✅ Server source validated")
 
 		filePath := filepath.Join(serverDir, serverChoice.FileName)
 		fmt.Println(internal.GetTranslation("CREATE_DOWNLOADING"))
@@ -360,6 +372,19 @@ var createCmd = &cobra.Command{
 			fmt.Printf(internal.GetTranslation("CREATE_BEDROCK_SERVER_START_INFO"), serverName)
 			fmt.Println()
 		}
+
+		// Perform comprehensive security validation
+		fmt.Println("🔒 Performing security validation...")
+		if err := validator.ValidateServerDirectory(serverDir); err != nil {
+			fmt.Printf("❌ Security validation failed: %s\n", err)
+			fmt.Println("Server creation aborted for security reasons.")
+			
+			// Clean up the directory if validation fails
+			fmt.Println("🧹 Cleaning up invalid server files...")
+			os.RemoveAll(serverDir)
+			return
+		}
+		fmt.Println("✅ Server security validation passed")
 
 		body := map[string]string{
 			"type":       tipo,
