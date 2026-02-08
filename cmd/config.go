@@ -53,7 +53,17 @@ func openBrowser(url string) {
 	var err error
 	switch runtime.GOOS {
 	case "linux":
-		err = exec.Command("xdg-open", url).Start()
+		// Check if running in Termux
+		prefix := os.Getenv("PREFIX")
+		isTermux := prefix != "" && (filepath.Base(prefix) == "usr" || 
+			filepath.Base(filepath.Dir(prefix)) == "com.termux")
+		
+		if isTermux {
+			// Termux uses termux-open-url instead of xdg-open
+			err = exec.Command("termux-open-url", url).Start()
+		} else {
+			err = exec.Command("xdg-open", url).Start()
+		}
 	case "windows":
 		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
 	case "darwin":
