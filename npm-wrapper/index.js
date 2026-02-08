@@ -8,13 +8,58 @@ const platform = os.platform();
 const arch = os.arch();
 let binary = '';
 
+// Detect if running on Android/Termux
+function isAndroid() {
+    // Check for Android-specific environment variables
+    if (process.env.ANDROID_ROOT || process.env.ANDROID_DATA) {
+        return true;
+    }
+    
+    // Check for Termux-specific environment
+    if (process.env.TERMUX_VERSION || (process.env.PREFIX && process.env.PREFIX.includes('/com.termux/'))) {
+        return true;
+    }
+    
+    // Check if /system/bin/sh exists (Android-specific path)
+    try {
+        if (fs.existsSync('/system/bin/sh') && !fs.existsSync('/usr/bin/sh')) {
+            return true;
+        }
+    } catch (e) {
+        // Ignore errors
+    }
+    
+    return false;
+}
+
 if (platform === 'linux') {
-    if (arch === 'arm64') {
-        binary = 'mineflared-linux-arm64';
-    } else if (arch === 'arm') {
-        binary = 'mineflared-linux-arm';
+    // Check if running on Android/Termux
+    if (isAndroid()) {
+        if (arch === 'arm64' || arch === 'aarch64') {
+            // Try Android-specific binary first
+            const androidBinary = 'mineflared-android-arm64';
+            const androidPath = path.join(__dirname, 'bin', androidBinary);
+            if (fs.existsSync(androidPath)) {
+                binary = androidBinary;
+            } else {
+                // Fall back to Linux ARM64 binary (Termux provides Linux compatibility)
+                binary = 'mineflared-linux-arm64';
+            }
+        } else if (arch === 'arm') {
+            binary = 'mineflared-linux-arm';
+        } else {
+            // For x64/amd64 on Android, use Linux binary (Termux compatibility)
+            binary = 'mineflared-linux';
+        }
     } else {
-        binary = 'mineflared-linux';
+        // Regular Linux
+        if (arch === 'arm64') {
+            binary = 'mineflared-linux-arm64';
+        } else if (arch === 'arm') {
+            binary = 'mineflared-linux-arm';
+        } else {
+            binary = 'mineflared-linux';
+        }
     }
 } else if (platform === 'darwin') {
     if (arch === 'arm64') {

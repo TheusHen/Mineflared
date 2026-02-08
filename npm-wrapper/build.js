@@ -14,19 +14,26 @@ const builds = [
     { goos: 'linux', goarch: 'amd64', output: 'mineflared-linux' },
     { goos: 'linux', goarch: 'arm64', output: 'mineflared-linux-arm64' },
     { goos: 'linux', goarch: 'arm', output: 'mineflared-linux-arm' },
+    { goos: 'android', goarch: 'arm64', output: 'mineflared-android-arm64', cgo: '0' },
     { goos: 'darwin', goarch: 'amd64', output: 'mineflared-darwin' },
     { goos: 'darwin', goarch: 'arm64', output: 'mineflared-darwin-arm64' },
     { goos: 'windows', goarch: 'amd64', output: 'mineflared-windows.exe' },
 ];
 
-function build(goos, goarch, output) {
+function build(goos, goarch, output, cgo) {
     const env = {
         ...process.env,
         GOOS: goos,
         GOARCH: goarch,
     };
 
-    const result = spawnSync('go', ['build', '-o', path.join(BIN_DIR, output)], {
+    // Set CGO_ENABLED if specified
+    if (cgo !== undefined) {
+        env.CGO_ENABLED = cgo;
+    }
+
+    // Build from the parent directory (where main.go is)
+    const result = spawnSync('go', ['build', '-o', path.join(BIN_DIR, output), '..'], {
         env,
         stdio: 'inherit',
         shell: true
@@ -38,8 +45,8 @@ function build(goos, goarch, output) {
     }
 }
 
-for (const { goos, goarch, output } of builds) {
-    build(goos, goarch, output);
+for (const { goos, goarch, output, cgo } of builds) {
+    build(goos, goarch, output, cgo);
 }
 
 console.log('✅ All binaries built successfully.');
