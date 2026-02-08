@@ -59,33 +59,59 @@ func SelfInstall() {
 		os.Exit(0)
 
 	case "linux":
-		targetDir := "/usr/local/bin"
-		targetExe := filepath.Join(targetDir, "mineflared-cli")
+		// Check if running in Termux
+		isTermux := IsTermux()
+		prefix := os.Getenv("PREFIX")
+		
+		var targetDir string
+		var targetExe string
+		
+		if isTermux {
+			// Termux uses $PREFIX/bin instead of /usr/local/bin
+			targetDir = filepath.Join(prefix, "bin")
+			targetExe = filepath.Join(targetDir, "mineflared-cli")
+		} else {
+			targetDir = "/usr/local/bin"
+			targetExe = filepath.Join(targetDir, "mineflared-cli")
+		}
 
 		if isSameFile(exePath, targetExe) {
 			return
 		}
 
 		if err := os.MkdirAll(targetDir, 0755); err != nil {
-			fmt.Println("❌ Permission denied to create install directory.")
-			fmt.Println("Please run the program with sudo and try again.")
+			if isTermux {
+				fmt.Println("❌ Permission denied to create install directory.")
+				fmt.Println("Please ensure you have write access to:", targetDir)
+			} else {
+				fmt.Println("❌ Permission denied to create install directory.")
+				fmt.Println("Please run the program with sudo and try again.")
+			}
 			os.Exit(1)
 		}
 
 		err = copyFileWithErr(exePath, targetExe)
 		if err != nil {
-			fmt.Println("❌ Permission denied to copy executable.")
-			fmt.Println("Please run the program with sudo and try again.")
+			if isTermux {
+				fmt.Println("❌ Permission denied to copy executable.")
+				fmt.Println("Please ensure you have write access to:", targetDir)
+			} else {
+				fmt.Println("❌ Permission denied to copy executable.")
+				fmt.Println("Please run the program with sudo and try again.")
+			}
 			os.Exit(1)
 		}
 
 		os.Chmod(targetExe, 0755)
 
-		err = addToPathLinux(targetDir)
-		if err != nil {
-			fmt.Println("⚠️ Warning: Could not add directory to PATH.")
-			fmt.Println("You will need to add it manually:", targetDir)
+		if !isTermux {
+			err = addToPathLinux(targetDir)
+			if err != nil {
+				fmt.Println("⚠️ Warning: Could not add directory to PATH.")
+				fmt.Println("You will need to add it manually:", targetDir)
+			}
 		}
+		// In Termux, $PREFIX/bin is already in PATH by default
 
 		fmt.Println("✅ mineflared-cli installed in", targetDir)
 		fmt.Println("Please open a new terminal and run: mineflared-cli")
