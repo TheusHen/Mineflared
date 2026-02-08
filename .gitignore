@@ -6,6 +6,9 @@
 mineflared-cli
 mineflared
 
+# NPM wrapper binaries (built by CI - but now committed to repo for distribution)
+# npm-wrapper/bin/
+
 # Test binary, built with `go test -c`
 *.test
 

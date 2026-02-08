@@ -11,22 +11,42 @@ fs.mkdirSync(BIN_DIR, { recursive: true });
 console.log('Building Go binaries...');
 
 const builds = [
-    { goos: 'linux', goarch: 'amd64', output: 'mineflared-linux' },
-    { goos: 'darwin', goarch: 'amd64', output: 'mineflared-darwin' },
-    { goos: 'windows', goarch: 'amd64', output: 'mineflared-windows.exe' },
+    { goos: 'linux', goarch: 'amd64', output: 'mineflared-linux', cgo: '0' },
+    { goos: 'linux', goarch: 'arm64', output: 'mineflared-linux-arm64', cgo: '0' },
+    { goos: 'linux', goarch: 'arm', output: 'mineflared-linux-arm', cgo: '0' },
+    { goos: 'android', goarch: 'arm64', output: 'mineflared-android-arm64', cgo: '0' },
+    { goos: 'darwin', goarch: 'amd64', output: 'mineflared-darwin', cgo: '0' },
+    { goos: 'darwin', goarch: 'arm64', output: 'mineflared-darwin-arm64', cgo: '0' },
+    { goos: 'windows', goarch: 'amd64', output: 'mineflared-windows.exe', cgo: '0' },
 ];
 
-function build(goos, goarch, output) {
+function build(goos, goarch, output, cgo) {
     const env = {
         ...process.env,
         GOOS: goos,
         GOARCH: goarch,
     };
 
-    const result = spawnSync('go', ['build', '-o', path.join(BIN_DIR, output)], {
+    // Set CGO_ENABLED if specified
+    if (cgo !== undefined) {
+        env.CGO_ENABLED = cgo;
+    }
+
+    // Build from the parent directory (where main.go is), using explicit path
+    const rootDir = path.join(__dirname, '..');
+    
+    // Add build flags for static linking and to ensure no CGO
+    const buildArgs = [
+        'build',
+        '-ldflags=-w -s',  // Strip debug info and symbol table for static linking
+        '-tags=netgo',      // Use pure Go network stack (no CGO)
+        '-o', path.join(BIN_DIR, output),
+        rootDir
+    ];
+    
+    const result = spawnSync('go', buildArgs, {
         env,
-        stdio: 'inherit',
-        shell: true
+        stdio: 'inherit'
     });
 
     if (result.status !== 0) {
@@ -35,8 +55,8 @@ function build(goos, goarch, output) {
     }
 }
 
-for (const { goos, goarch, output } of builds) {
-    build(goos, goarch, output);
+for (const { goos, goarch, output, cgo } of builds) {
+    build(goos, goarch, output, cgo);
 }
 
 console.log('✅ All binaries built successfully.');
