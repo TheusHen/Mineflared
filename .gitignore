@@ -7,7 +7,8 @@ mineflared-cli
 mineflared
 
 # NPM wrapper binaries (built by CI)
-npm-wrapper/bin/
+npm-wrapper/bin/*
+!npm-wrapper/bin/.gitkeep
 
 # Test binary, built with `go test -c`
 *.test
