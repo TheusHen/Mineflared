@@ -35,8 +35,7 @@ function build(goos, goarch, output, cgo) {
     // Build from the parent directory (where main.go is)
     const result = spawnSync('go', ['build', '-o', path.join(BIN_DIR, output), '..'], {
         env,
-        stdio: 'inherit',
-        shell: true
+        stdio: 'inherit'
     });
 
     if (result.status !== 0) {
