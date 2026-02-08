@@ -60,8 +60,8 @@ func SelfInstall() {
 
 	case "linux":
 		// Check if running in Termux
+		isTermux := IsTermux()
 		prefix := os.Getenv("PREFIX")
-		isTermux := prefix != "" && strings.Contains(prefix, "com.termux")
 		
 		var targetDir string
 		var targetExe string

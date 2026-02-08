@@ -9,7 +9,7 @@ const arch = os.arch();
 let binary = '';
 
 if (platform === 'linux') {
-    if (arch === 'arm64' || arch === 'aarch64') {
+    if (arch === 'arm64') {
         binary = 'mineflared-linux-arm64';
     } else if (arch === 'arm') {
         binary = 'mineflared-linux-arm';

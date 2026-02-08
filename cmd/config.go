@@ -54,11 +54,7 @@ func openBrowser(url string) {
 	switch runtime.GOOS {
 	case "linux":
 		// Check if running in Termux
-		prefix := os.Getenv("PREFIX")
-		isTermux := prefix != "" && (filepath.Base(prefix) == "usr" || 
-			filepath.Base(filepath.Dir(prefix)) == "com.termux")
-		
-		if isTermux {
+		if internal.IsTermux() {
 			// Termux uses termux-open-url instead of xdg-open
 			err = exec.Command("termux-open-url", url).Start()
 		} else {
