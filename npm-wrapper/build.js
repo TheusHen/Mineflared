@@ -32,8 +32,9 @@ function build(goos, goarch, output, cgo) {
         env.CGO_ENABLED = cgo;
     }
 
-    // Build from the parent directory (where main.go is)
-    const result = spawnSync('go', ['build', '-o', path.join(BIN_DIR, output), '..'], {
+    // Build from the parent directory (where main.go is), using explicit path
+    const rootDir = path.join(__dirname, '..');
+    const result = spawnSync('go', ['build', '-o', path.join(BIN_DIR, output), rootDir], {
         env,
         stdio: 'inherit'
     });
