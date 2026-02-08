@@ -11,13 +11,13 @@ fs.mkdirSync(BIN_DIR, { recursive: true });
 console.log('Building Go binaries...');
 
 const builds = [
-    { goos: 'linux', goarch: 'amd64', output: 'mineflared-linux' },
-    { goos: 'linux', goarch: 'arm64', output: 'mineflared-linux-arm64' },
-    { goos: 'linux', goarch: 'arm', output: 'mineflared-linux-arm' },
+    { goos: 'linux', goarch: 'amd64', output: 'mineflared-linux', cgo: '0' },
+    { goos: 'linux', goarch: 'arm64', output: 'mineflared-linux-arm64', cgo: '0' },
+    { goos: 'linux', goarch: 'arm', output: 'mineflared-linux-arm', cgo: '0' },
     { goos: 'android', goarch: 'arm64', output: 'mineflared-android-arm64', cgo: '0' },
-    { goos: 'darwin', goarch: 'amd64', output: 'mineflared-darwin' },
-    { goos: 'darwin', goarch: 'arm64', output: 'mineflared-darwin-arm64' },
-    { goos: 'windows', goarch: 'amd64', output: 'mineflared-windows.exe' },
+    { goos: 'darwin', goarch: 'amd64', output: 'mineflared-darwin', cgo: '0' },
+    { goos: 'darwin', goarch: 'arm64', output: 'mineflared-darwin-arm64', cgo: '0' },
+    { goos: 'windows', goarch: 'amd64', output: 'mineflared-windows.exe', cgo: '0' },
 ];
 
 function build(goos, goarch, output, cgo) {
