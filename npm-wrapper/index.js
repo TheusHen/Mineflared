@@ -69,6 +69,24 @@ if (platform === 'linux') {
     }
 } else if (platform === 'win32' || platform === 'win64') {
     binary = 'mineflared-windows.exe';
+} else if (platform === 'android') {
+    // Handle when os.platform() directly reports 'android'
+    if (arch === 'arm64' || arch === 'aarch64') {
+        // Try Android-specific binary first
+        const androidBinary = 'mineflared-android-arm64';
+        const androidPath = path.join(__dirname, 'bin', androidBinary);
+        if (fs.existsSync(androidPath)) {
+            binary = androidBinary;
+        } else {
+            // Fall back to Linux ARM64 binary (Termux provides Linux compatibility)
+            binary = 'mineflared-linux-arm64';
+        }
+    } else if (arch === 'arm') {
+        binary = 'mineflared-linux-arm';
+    } else {
+        // For x64/amd64 on Android, use Linux binary (Termux compatibility)
+        binary = 'mineflared-linux';
+    }
 } else {
     console.error(`Unsupported platform: ${platform}`);
     process.exit(1);
