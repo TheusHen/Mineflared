@@ -12,10 +12,7 @@ console.log('Building Go binaries...');
 
 const builds = [
     { goos: 'linux', goarch: 'amd64', output: 'mineflared-linux' },
-    { goos: 'linux', goarch: 'arm64', output: 'mineflared-linux-arm64' },
-    { goos: 'linux', goarch: 'arm', output: 'mineflared-linux-arm' },
     { goos: 'darwin', goarch: 'amd64', output: 'mineflared-darwin' },
-    { goos: 'darwin', goarch: 'arm64', output: 'mineflared-darwin-arm64' },
     { goos: 'windows', goarch: 'amd64', output: 'mineflared-windows.exe' },
 ];
 

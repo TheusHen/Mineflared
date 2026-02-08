@@ -32,23 +32,14 @@ Proxy protection for Bedrock servers will not be possible due to UDP/IP, and Jav
 
 ## 📦 Installation
 
-### NPM (Linux, macOS, Windows, Termux)
-
 ```bash
 npm install -g mineflared
 ````
 
-### PowerShell (Windows)
+Or via PowerShell:
 
 ```powershell
 iex (iwr -Uri "https://mineflared.theushen.me/install.ps1").Content
-```
-
-### Termux (Android)
-
-```bash
-pkg install nodejs-lts
-npm install -g mineflared
 ```
 
 ---
