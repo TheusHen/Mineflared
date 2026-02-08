@@ -34,7 +34,17 @@ function build(goos, goarch, output, cgo) {
 
     // Build from the parent directory (where main.go is), using explicit path
     const rootDir = path.join(__dirname, '..');
-    const result = spawnSync('go', ['build', '-o', path.join(BIN_DIR, output), rootDir], {
+    
+    // Add build flags for static linking and to ensure no CGO
+    const buildArgs = [
+        'build',
+        '-ldflags=-w -s',  // Strip debug info and symbol table for static linking
+        '-tags=netgo',      // Use pure Go network stack (no CGO)
+        '-o', path.join(BIN_DIR, output),
+        rootDir
+    ];
+    
+    const result = spawnSync('go', buildArgs, {
         env,
         stdio: 'inherit'
     });
